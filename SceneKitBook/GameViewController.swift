@@ -14,6 +14,8 @@ class GameViewController: UIViewController {
     var scnScene: SCNScene!
     var cameraNode: SCNNode!
 
+    var spawnTime: TimeInterval = 0
+
     override var shouldAutorotate: Bool {
         return true
     }
@@ -28,13 +30,15 @@ class GameViewController: UIViewController {
         setupCamera()
         setupScene()
         setupView()
-
-        spawnShape()
     }
 
     func setupView() {
         scnView = view as! SCNView
         scnView.scene = scnScene
+        scnView.delegate = self
+
+        // By default, SceneKit enters into a “paused” state if there are no animations to play out.
+        scnView.isPlaying = true
 
         scnView.showsStatistics = true /// enables a real-time statistics panel at the bottom of your scene.
         scnView.allowsCameraControl = true /// lets you manually control the active camera through simple gestures.
@@ -57,24 +61,17 @@ class GameViewController: UIViewController {
         let geometry: SCNGeometry
 
         switch ShapeType.random() {
-        case .box:
-            geometry = SCNBox(width: 1.0, height: 1.0, length: 1.0, chamferRadius: 0.0)
-        case .sphere:
-            geometry = SCNSphere(radius: 0.5)
-        case .pyramid:
-            geometry = SCNPyramid(width: 1.0, height: 1.0, length: 1.0)
-        case .torus:
-            geometry = SCNTorus(ringRadius: 0.5, pipeRadius: 0.25)
-        case .capsule:
-            geometry = SCNCapsule(capRadius: 0.3, height: 2.5)
-        case .cylinder:
-            geometry = SCNCylinder(radius: 0.3, height: 2.5)
-        case .cone:
-            geometry = SCNCone(topRadius: 0.25, bottomRadius: 0.5, height: 1.0)
-        case .tube:
-            geometry = SCNTube(innerRadius: 0.25, outerRadius: 0.5, height: 1.0)
+        case .box       :geometry = SCNBox(width: 1.0, height: 1.0, length: 1.0, chamferRadius: 0.0)
+        case .sphere:   geometry = SCNSphere(radius: 0.5)
+        case .pyramid:  geometry = SCNPyramid(width: 1.0, height: 1.0, length: 1.0)
+        case .torus:    geometry = SCNTorus(ringRadius: 0.5, pipeRadius: 0.25)
+        case .capsule:  geometry = SCNCapsule(capRadius: 0.3, height: 2.5)
+        case .cylinder: geometry = SCNCylinder(radius: 0.3, height: 2.5)
+        case .cone:     geometry = SCNCone(topRadius: 0.25, bottomRadius: 0.5, height: 1.0)
+        case .tube:     geometry = SCNTube(innerRadius: 0.25, outerRadius: 0.5, height: 1.0)
         }
-        geometry.materials.first?.diffuse.contents = UIColor.random()
+
+        geometry.materials.first?.diffuse.contents = UIColor.random() /// color of the shape
 
         let geometryNode = SCNNode(geometry: geometry)
         geometryNode.physicsBody = SCNPhysicsBody(type: .dynamic, shape: nil)
@@ -85,9 +82,30 @@ class GameViewController: UIViewController {
         let force = SCNVector3(x: randomX, y: randomY , z: 0)
         let position = SCNVector3(x: 0.05, y: 0.05, z: 0.05)
 
-//        geometryNode.physicsBody?.applyTorque(<#T##torque: SCNVector4##SCNVector4#>, asImpulse: <#T##Bool#>)
+        //        geometryNode.physicsBody?.applyTorque(<#T##torque: SCNVector4##SCNVector4#>, asImpulse: <#T##Bool#>)
         geometryNode.physicsBody?.applyForce(force, at: position, asImpulse: true)
 
         scnScene.rootNode.addChildNode(geometryNode)
+    }
+
+    func cleanScene() {
+        for node in scnScene.rootNode.childNodes {
+            // All nodes under animation have a “copied” version called the `presentationNode`.
+            if node.presentation.position.y < -2 {
+                node.removeFromParentNode()
+            }
+        }
+    }
+}
+
+extension GameViewController: SCNSceneRendererDelegate {
+
+    func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
+        // SceneKit maintains a copy of the object during the animation and plays it out until the animation is done.
+        cleanScene()
+        if time > spawnTime {
+            spawnShape()
+            spawnTime = time + TimeInterval(Float.random(min: 0.2, max: 1.5))
+        }
     }
 }
