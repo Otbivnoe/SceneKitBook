@@ -36,7 +36,7 @@ extension SCNVector3 {
   /**
    Calculates vector length based on Pythagoras theorem
    */
-  var length:Float {
+  var length: Float {
     get {
       return sqrtf(x*x + y*y + z*z)
     }
@@ -49,7 +49,7 @@ extension SCNVector3 {
    Calculate Length Squared of Vector
    - Use this to determine Longest/Shortest vector. Much faster than using v.length
    */
-  var lengthSquared:Float {
+  var lengthSquared: Float {
     get {
       return self.x * self.x + self.y * self.y + self.z * self.z;
     }
@@ -59,7 +59,7 @@ extension SCNVector3 {
    Returns unit vector (aka Normalized Vector)
    - v.length = 1.0
    */
-  var unit:SCNVector3 {
+  var unit: SCNVector3 {
     get {
       return self / self.length
     }
@@ -98,7 +98,7 @@ extension SCNVector3 {
   /**
    Get/Set vector angle on XY axis
    */
-  var xyAngle:Float {
+  var xyAngle: Float {
     get {
       return atan2(self.y, self.x)
     }
@@ -112,7 +112,7 @@ extension SCNVector3 {
   /**
    Get/Set vector angle on XZ axis
    */
-  var xzAngle:Float {
+  var xzAngle: Float {
     get {
       return atan2(self.z, self.x)
     }

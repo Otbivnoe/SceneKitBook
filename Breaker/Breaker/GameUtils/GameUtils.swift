@@ -26,19 +26,19 @@ import CoreGraphics
 let DegreesPerRadians = Float(M_PI/180)
 let RadiansPerDegrees = Float(180/M_PI)
 
-func convertToRadians(angle:Float) -> Float {
+func convertToRadians(angle: Float) -> Float {
   return angle * DegreesPerRadians
 }
 
-func convertToRadians(angle:CGFloat) -> CGFloat {
+func convertToRadians(angle: CGFloat) -> CGFloat {
   return CGFloat(CGFloat(angle) * CGFloat(DegreesPerRadians))
 }
 
 /// Convert Radians to Degrees
-func convertToDegrees(angle:Float) -> Float {
+func convertToDegrees(angle: Float) -> Float {
   return angle * RadiansPerDegrees
 }
 
-func convertToDegrees(angle:CGFloat) -> CGFloat {
+func convertToDegrees(angle: CGFloat) -> CGFloat {
   return CGFloat(CGFloat(angle) * CGFloat(RadiansPerDegrees))
 }
