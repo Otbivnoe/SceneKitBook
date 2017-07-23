@@ -19,32 +19,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-  
+
 import Foundation
 import CoreMotion
 
 class CoreMotionHelper {
-  
-  let motionManager = CMMotionManager()
-  
-  init() {
-  }
-  
-  func getAccelerometerData(interval: TimeInterval = 0.1, closure: ((_ x: Double, _ y: Double, _ z: Double) -> ())? ){
-    
-    if motionManager.isAccelerometerAvailable {
-      
-      motionManager.accelerometerUpdateInterval = interval
-      
-      motionManager.startAccelerometerUpdates(to: OperationQueue(), withHandler: {
-        (data: CMAccelerometerData?, error: NSError?) -> Void in
-        
-        if closure != nil{
-          closure!(data!.acceleration.x, data!.acceleration.y, data!.acceleration.z)
-        }
-        
-        } as! CMAccelerometerHandler
-      )
+
+    let motionManager = CMMotionManager()
+
+    init() {
     }
-  }
+
+    func getAccelerometerData(interval: TimeInterval = 0.1, closure: ((_ x: Double, _ y: Double, _ z: Double) -> ())? ){
+        if motionManager.isAccelerometerAvailable {
+            motionManager.accelerometerUpdateInterval = interval
+            motionManager.startAccelerometerUpdates(to: OperationQueue()) { data, error in
+                if closure != nil{
+                    closure!(data!.acceleration.x, data!.acceleration.y, data!.acceleration.z)
+                }
+            }
+        }
+    }
 }
